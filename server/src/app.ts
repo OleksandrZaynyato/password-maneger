@@ -1,5 +1,6 @@
 import express from "express";
 import authRoutes from "./features/auth/auth.routes";
+import passwordRoute from "./features/passwords/password.route";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -16,5 +17,6 @@ app.use(cors({
 }));
 
 app.use("/auth", authRoutes);
+app.use("/password", passwordRoute)
 
 
