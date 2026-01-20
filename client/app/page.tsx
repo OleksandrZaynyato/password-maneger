@@ -1,30 +1,22 @@
+"use client";
+
+import { useAuth } from "@/context/AuthContext";
+
 export default function HomePage() {
+    const { email, loading } = useAuth();
+
+    if (loading) return null; // optional: loading placeholder
+
     return (
-        <section className="text-center">
-            <h1 className="text-5xl font-extrabold mb-6">
-                Passwordless{" "}
-                <span className="text-rose-600">Magic Link</span> Auth
-            </h1>
-
-            <p className="text-zinc-600 text-lg max-w-2xl mx-auto mb-10">
-                A modern authentication system using magic links instead of passwords.
-                Secure, simple, and user-friendly.
+        <div className="max-w-3xl mx-auto py-16 px-4">
+            <h2 className="text-2xl font-semibold mb-4">
+                {email ? `Welcome back, ${email}!` : "Securely store and manage your passwords."}
+            </h2>
+            <p className="text-zinc-700">
+                {email
+                    ? "You are logged in and ready to manage your passwords."
+                    : "Please login or register to start using your password manager."}
             </p>
-
-            <div className="flex justify-center gap-4">
-                <a
-                    href="/register"
-                    className="px-6 py-3 rounded-xl bg-rose-600 text-white font-semibold hover:bg-rose-500 transition"
-                >
-                    Get Started
-                </a>
-                <a
-                    href="/login"
-                    className="px-6 py-3 rounded-xl border border-zinc-300 text-zinc-800 hover:border-amber-400 hover:text-amber-600 transition"
-                >
-                    Login
-                </a>
-            </div>
-        </section>
+        </div>
     );
 }

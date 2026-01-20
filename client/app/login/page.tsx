@@ -42,7 +42,7 @@ export default function LoginPage() {
 
                 <button
                     disabled={loading}
-                    className="px-4 py-3 rounded-lg bg-amber-400 text-zinc-900 font-semibold hover:bg-amber-300 disabled:opacity-60 transition"
+                    className="px-4 py-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-500 disabled:opacity-60 transition"
                 >
                     {loading ? "Sending..." : "Send Magic Link"}
                 </button>

@@ -1,41 +1,41 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function VerifyPage() {
-    const searchParams = useSearchParams();
-    const token = searchParams.get("token");
-
-    const [status, setStatus] = useState("Verifying...");
-    const [error, setError] = useState("");
+    const params = useSearchParams();
+    const router = useRouter();
+    const token = params.get("token");
+    const { setEmail } = useAuth();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!token) {
-            setError("No token provided");
-            setStatus("");
-            return;
+        if (!token) return;
+
+        async function verify() {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify?token=${token}`, {
+                    credentials: "include",
+                });
+
+                if (!res.ok) throw new Error("Verification failed");
+
+                const data = await res.json();
+                setEmail(data.user.email); // ✅ update global state
+                router.replace("/"); // redirect home
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         }
 
-        const verifyToken = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify?token=${token}`);
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || "Verification failed");
-                setStatus("✅ Verified! You are logged in.");
-            } catch (err: any) {
-                setError(err.message);
-                setStatus("");
-            }
-        };
+        verify();
+    }, [token, router, setEmail]);
 
-        verifyToken();
-    }, [token]);
+    if (loading) return <p className="text-center py-16">Verifying…</p>;
 
-    return (
-        <div className="max-w-md mx-auto mt-16 p-8 bg-white rounded-2xl border border-zinc-200 shadow-sm text-center">
-            {status && <p className="text-green-600 text-lg">{status}</p>}
-            {error && <p className="text-red-600 text-lg">{error}</p>}
-        </div>
-    );
+    return null;
 }

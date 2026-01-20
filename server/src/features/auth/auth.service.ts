@@ -45,3 +45,23 @@ export const verifyMagicToken = async (tokenStr: string) => {
 
     return user;
 };
+
+export const loginUser = async ({ email }: RegisterDTO) => {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    const token = generateToken();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    await MagicToken.create({
+        userId: user._id,
+        token,
+        expiresAt,
+        used: false,
+    });
+
+    return { user, token };
+};
